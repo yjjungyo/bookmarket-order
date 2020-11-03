@@ -8,6 +8,8 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PolicyHandler{
     @StreamListener(KafkaProcessor.INPUT)
@@ -15,11 +17,17 @@ public class PolicyHandler{
 
     }
 
+    @Autowired
+    OrderRepository orderRepository;
+
     @StreamListener(KafkaProcessor.INPUT)
     public void wheneverPaid_UpdateStatus(@Payload Paid paid){
 
         if(paid.isMe()){
             System.out.println("##### listener UpdateStatus : " + paid.toJson());
+
+            updateStatus(paid.getOrderId(), paid.getStatus());
+
         }
     }
     @StreamListener(KafkaProcessor.INPUT)
@@ -27,6 +35,8 @@ public class PolicyHandler{
 
         if(shipped.isMe()){
             System.out.println("##### listener UpdateStatus : " + shipped.toJson());
+
+            updateStatus(shipped.getOrderId(), shipped.getStatus());
         }
     }
     @StreamListener(KafkaProcessor.INPUT)
@@ -34,7 +44,16 @@ public class PolicyHandler{
 
         if(deliveryCanceled.isMe()){
             System.out.println("##### listener UpdateStatus : " + deliveryCanceled.toJson());
+
+            updateStatus(deliveryCanceled.getOrderId(), deliveryCanceled.getStatus());
         }
     }
 
+    private void updateStatus(Long orderId, String status){
+        Optional<Order> orderOptional = orderRepository.findById(orderId);
+        Order order = orderOptional.get();
+        order.setStatus(status);
+
+        orderRepository.save(order);
+    }
 }

@@ -26,6 +26,9 @@ public class Order {
         // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
 
         bookmarket.external.Payment payment = new bookmarket.external.Payment();
+        payment.setOrderId(this.getId());
+        payment.setStatus("Ordered");
+        payment.setCustomerId(this.getCustomerId());
         // mappings goes here
         OrderApplication.applicationContext.getBean(bookmarket.external.PaymentService.class)
             .payReq(payment);
@@ -33,10 +36,11 @@ public class Order {
 
     }
 
-    @PreUpdate
-    public void onPreUpdate(){
+    @PreRemove
+    public void onPreRemove(){
         OrderCanceled orderCanceled = new OrderCanceled();
         BeanUtils.copyProperties(this, orderCanceled);
+        orderCanceled.setStatus("OrderCanceled");
         orderCanceled.publishAfterCommit();
 
 
