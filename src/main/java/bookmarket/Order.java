@@ -20,6 +20,7 @@ public class Order {
     public void onPostPersist(){
         Ordered ordered = new Ordered();
         BeanUtils.copyProperties(this, ordered);
+        ordered.setStatus("Ordered");
         ordered.publishAfterCommit();
 
         //Following code causes dependency to external APIs
@@ -42,8 +43,6 @@ public class Order {
         BeanUtils.copyProperties(this, orderCanceled);
         orderCanceled.setStatus("OrderCanceled");
         orderCanceled.publishAfterCommit();
-
-
     }
 
 

@@ -33,7 +33,7 @@ public class PolicyHandler{
     @StreamListener(KafkaProcessor.INPUT)
     public void wheneverShipped_UpdateStatus(@Payload Shipped shipped){
 
-        if(shipped.isMe()){
+        if(shipped.isMe() && shipped.getStatus().equals("Shipped")){
             System.out.println("##### listener UpdateStatus : " + shipped.toJson());
 
             updateStatus(shipped.getOrderId(), shipped.getStatus());
@@ -42,7 +42,7 @@ public class PolicyHandler{
     @StreamListener(KafkaProcessor.INPUT)
     public void wheneverDeliveryCanceled_UpdateStatus(@Payload DeliveryCanceled deliveryCanceled){
 
-        if(deliveryCanceled.isMe()){
+        if(deliveryCanceled.isMe() && deliveryCanceled.getStatus().equals("DeliveryCanceled")){
             System.out.println("##### listener UpdateStatus : " + deliveryCanceled.toJson());
 
             updateStatus(deliveryCanceled.getOrderId(), deliveryCanceled.getStatus());
