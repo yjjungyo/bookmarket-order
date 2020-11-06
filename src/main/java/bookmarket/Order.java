@@ -26,6 +26,7 @@ public class Order {
         //Following code causes dependency to external APIs
         // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
 
+        System.out.println("---------------------------");
         bookmarket.external.Payment payment = new bookmarket.external.Payment();
         payment.setOrderId(this.getId());
         payment.setStatus("Ordered");
